@@ -1,0 +1,6 @@
+framework module Pods_VKClient_RazgulyaevSergey {
+  umbrella header "Pods-VKClient_RazgulyaevSergey-umbrella.h"
+
+  export *
+  module * { export * }
+}
