@@ -25,7 +25,6 @@ class NewsViewController: UIViewController {
     private let newsPostCellNibName = "NewsPostCell"
     private let newsPhotoCellIdentifier = "NewsPhotoCellIdentifier"
     private let newsPhotoCellNibName = "NewsPhotoCell"
-//    private var rowHeight: CGFloat = 610
     
     //MARK: - Properties for Interaction with Network
     private let networkService = NetworkService()
@@ -131,7 +130,7 @@ extension NewsViewController: UITableViewDataSourcePrefetching {
     }
     
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-        print("cancelPrefetchingForRowsAt \(indexPaths.first?.row ?? -1)")
+//        print("cancelPrefetchingForRowsAt \(indexPaths.first?.row ?? -1)")
     }
     
     func isLoadingCell(for indexPath: IndexPath) -> Bool {
@@ -157,7 +156,10 @@ extension NewsViewController: UITableViewDataSource {
             print("Error with News Cell")
             return UITableViewCell()
         }
-        cell.configurePostTextShowButtonLabel(label: "Show more...", state: .normal)
+        cell.postTextShowButtonAction = {
+            self.tableView.beginUpdates()
+            self.tableView.endUpdates()
+        }
         sourceIDChecker = news.items[indexPath.row].sourceID
         
         var photoRatio: CGFloat = 1.0
@@ -396,7 +398,7 @@ extension NewsViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 610
+        return UITableView.automaticDimension
     }
 }
 

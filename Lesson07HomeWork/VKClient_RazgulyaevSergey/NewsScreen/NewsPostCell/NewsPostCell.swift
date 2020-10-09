@@ -11,7 +11,6 @@ import UIKit
 class NewsPostCell: UITableViewCell {
     @IBOutlet private weak var newsAuthorNameLabel: UILabel!
     @IBOutlet private weak var newsDateLabel: UILabel!
-    @IBOutlet private weak var postTextScrollView: UIScrollView!
     @IBOutlet private weak var postTextLabel: UILabel!
     @IBOutlet private weak var newsForMeAvatarView: UIView!
     @IBOutlet private weak var newsForMeAvatarImageView: UIImageView!
@@ -27,7 +26,6 @@ class NewsPostCell: UITableViewCell {
     //MARK: - Base properties
     private var isPostTextShowButtonPressed: Bool = false
     private var originalPostTextHeight: CGFloat = 95
-    private var maximumPostTextHeight: CGFloat = 195
     private let postTextLabelSideInsets: CGFloat = 20
     var postTextShowButtonAction: (() -> ())?
 
@@ -35,6 +33,11 @@ class NewsPostCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         configure()
+    }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        postTextShowButton.setTitle("Show more...", for: .normal)
+        newsPostTextHeightConstraint.constant = originalPostTextHeight
     }
     
     //MARK: - Configuration Methods
@@ -49,6 +52,7 @@ class NewsPostCell: UITableViewCell {
         
         newsForMeAvatarImageView.layer.cornerRadius = newsForMeAvatarImageView.bounds.width / 2
         newsForMeAvatarImageView.clipsToBounds = true
+        postTextShowButton.setTitle("Show more...", for: .normal)
     }
     
     func configureNewsDateLabelText(newsDateLabelText: String) {
@@ -142,12 +146,11 @@ class NewsPostCell: UITableViewCell {
             
         } else {
             let calculatedLabelHeight = calculateLabelHeight(text: postTextLabel.text ?? "", font: .boldSystemFont(ofSize: 14))
-            print("calculatedLabelHeight \(calculatedLabelHeight)")
+//            print("calculatedLabelHeight \(calculatedLabelHeight)")
             if calculatedLabelHeight < originalPostTextHeight {
                 newsPostTextHeightConstraint.constant = originalPostTextHeight
             } else {
-                maximumPostTextHeight = calculatedLabelHeight
-                newsPostTextHeightConstraint.constant = maximumPostTextHeight
+                newsPostTextHeightConstraint.constant = calculatedLabelHeight
             }
             isPostTextShowButtonPressed = true
             postTextShowButton.setTitle("...hide", for: .normal)
