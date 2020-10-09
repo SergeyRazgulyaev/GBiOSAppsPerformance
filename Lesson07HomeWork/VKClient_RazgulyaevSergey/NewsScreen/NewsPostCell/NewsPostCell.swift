@@ -27,7 +27,7 @@ class NewsPostCell: UITableViewCell {
     //MARK: - Base properties
     private var isPostTextShowButtonPressed: Bool = false
     private var originalPostTextHeight: CGFloat = 95
-    private let maximumPostTextHeight: CGFloat = 195
+    private var maximumPostTextHeight: CGFloat = 195
     private let postTextLabelSideInsets: CGFloat = 20
     var postTextShowButtonAction: (() -> ())?
 
@@ -146,6 +146,7 @@ class NewsPostCell: UITableViewCell {
             if calculatedLabelHeight < originalPostTextHeight {
                 newsPostTextHeightConstraint.constant = originalPostTextHeight
             } else {
+                maximumPostTextHeight = calculatedLabelHeight
                 newsPostTextHeightConstraint.constant = maximumPostTextHeight
             }
             isPostTextShowButtonPressed = true
