@@ -61,7 +61,6 @@
                         <rect key="frame" x="0.0" y="200" width="414" height="277"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="width" secondItem="6ej-GN-0gZ" secondAttribute="height" multiplier="414:277" id="NsV-1r-FjW"/>
                             <constraint firstAttribute="height" constant="277" id="g2g-Tz-6vk"/>
                         </constraints>
                     </imageView>
@@ -138,13 +137,13 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lsd-Le-TIO">
-                        <rect key="frame" x="307" y="177" width="87" height="20"/>
+                        <rect key="frame" x="364" y="177" width="30" height="20"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="20" id="K3W-br-AUz"/>
                         </constraints>
                         <fontDescription key="fontDescription" name="ArialRoundedMTBold" family="Arial Rounded MT Bold" pointSize="14"/>
-                        <state key="normal" title="Show Button">
+                        <state key="normal">
                             <color key="titleColor" red="0.4756349325" green="0.47564673419999998" blue="0.47564041610000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         </state>
                         <connections>

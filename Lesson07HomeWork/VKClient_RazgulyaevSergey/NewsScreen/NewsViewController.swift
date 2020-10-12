@@ -51,7 +51,7 @@ class NewsViewController: UIViewController {
         tableView.prefetchDataSource = self
         tableView.register(UINib(nibName: newsPostCellNibName, bundle: nil), forCellReuseIdentifier: newsPostCellIdentifier)
     }
-
+    
 }
 
 //MARK: - Refresh Method (Pull-to-refresh Pattern)
@@ -130,7 +130,7 @@ extension NewsViewController: UITableViewDataSourcePrefetching {
     }
     
     func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
-//        print("cancelPrefetchingForRowsAt \(indexPaths.first?.row ?? -1)")
+        //        print("cancelPrefetchingForRowsAt \(indexPaths.first?.row ?? -1)")
     }
     
     func isLoadingCell(for indexPath: IndexPath) -> Bool {
@@ -156,22 +156,24 @@ extension NewsViewController: UITableViewDataSource {
             print("Error with News Cell")
             return UITableViewCell()
         }
+        
+        // Triggering of button "Show more ... hide" in the Cell
         cell.postTextShowButtonAction = {
             self.tableView.beginUpdates()
             self.tableView.endUpdates()
         }
-        sourceIDChecker = news.items[indexPath.row].sourceID
         
-        var photoRatio: CGFloat = 1.0
-        
-        let groupOwner = news.groups.filter { $0.id == (-sourceIDChecker) }.first
-        let friendOwner = news.profiles.filter { $0.id == sourceIDChecker }.first
-        
+        // Configure News Likes, Comments, Shares, Views
         cell.getNewsLikeIndicator().configureNewsLikeLabelText(newsLikeLabelText: String(news.items[indexPath.row].likes.count))
         cell.getNewsCommentIndicator().configureNewsCommentLabelText(newsCommentLabelText: String(news.items[indexPath.row].comments.count))
         cell.getNewsShareIndicator().configureNewsShareLabelText(newsShareLabelText: String(news.items[indexPath.row].reposts.count))
         cell.getNewsViewsIndicator().configureNewsViewsLabelText(newsViewsLabelText: String(news.items[indexPath.row].views.count))
         
+        // News Source Checker (Friends or Groups)
+        sourceIDChecker = news.items[indexPath.row].sourceID
+        let groupOwner = news.groups.filter { $0.id == (-sourceIDChecker) }.first
+        let friendOwner = news.profiles.filter { $0.id == sourceIDChecker }.first
+
         // Filling the Cell depending on the News Source
         switch sourceIDChecker {
         case (-Int.max ..< 0): // Groups Cell
@@ -185,216 +187,89 @@ extension NewsViewController: UITableViewDataSource {
             cell.configureNewsDateLabelText(newsDateLabelText: getCellDateText(forIndexPath: indexPath, andTimeToTranslate: Double(news.items[indexPath.row].date)))
             cell.configurePostTextLabelText(postTextLabelText: postText)
             
-            // Cell formation depending on the Post Type (if Link)
-            if news.items[indexPath.row].newsAttachments?.first?.type == "link" {
-                let pathForPhoto = news.items[indexPath.row].newsAttachments?[0].link?.photo?.sizes.first
-                let photoWidth = pathForPhoto?.width
-                let photoHeight = pathForPhoto?.height
-                
-                guard photoHeight != nil, photoWidth != nil else {
-                    cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                    return cell
-                }
-                if photoHeight != 0 {
-                    photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                }
-                let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                
-                let newsPostPhoto = pathForPhoto?.url ?? ""
-                guard let url = URL(string: newsPostPhoto), let data = try? Data(contentsOf: url) else { return cell }
-                cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-            }
-            
-            // Cell formation depending on the Post Type (if Photo)
-            if news.items[indexPath.row].newsAttachments?.first?.type == "photo" {
-                let pathForPhoto = news.items[indexPath.row].newsAttachments?.first?.photo?.sizes.last
-                let photoWidth = pathForPhoto?.width
-                let photoHeight = pathForPhoto?.height
-                
-                guard photoHeight != nil, photoWidth != nil else {
-                    cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                    return cell
-                }
-                if photoHeight != 0 {
-                    photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                }
-                let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                
-                let newsPostPhoto = pathForPhoto?.url ?? ""
-                guard let url = URL(string: newsPostPhoto), let data = try? Data(contentsOf: url) else { return cell }
-                cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-            }
-            
-            // Cell formation depending on the Post Type (if Video)
-            if news.items[indexPath.row].newsAttachments?.first?.type == "video" {
-                let pathForPhoto = news.items[indexPath.row].newsAttachments?.first?.video?.image?.last
-                let photoWidth =  pathForPhoto?.width
-                let photoHeight = pathForPhoto?.height
-                
-                guard photoHeight != nil, photoWidth != nil else {
-                    cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                    return cell
-                }
-                if photoHeight != 0 {
-                    photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                }
-                let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                
-                let newsPostVideoImage = pathForPhoto?.url ?? ""
-                guard let url = URL(string: newsPostVideoImage), let data = try? Data(contentsOf: url) else { return cell }
-                cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-            }
+            guard let mainAttachmentsPath = news.items[indexPath.row].newsAttachments, let typeOfNewsPost = mainAttachmentsPath.first?.type else { return cell }
+            typeOfNewsPostSwitcher(mainAttachmentsPath: mainAttachmentsPath, typeOfNewsPost: typeOfNewsPost, cell: cell)
             return cell
             
         case (1 ... Int.max): // Friends Cell
-            cell.configureNewsAuthorNameLabelText(newsAuthorNameLabelText:(friendOwner?.firstName ?? "") + (" ") +  (friendOwner?.lastName ?? ""))
+            cell.configureNewsAuthorNameLabelText(newsAuthorNameLabelText:(friendOwner?.firstName ?? "") + (" ") + (friendOwner?.lastName ?? ""))
             
             let newsPostSourceAvatarImage = friendOwner?.photo100 ?? ""
             guard let newsPostSourceAvatarImageURL = URL(string: newsPostSourceAvatarImage), let newsPostSourceAvatarImageData = try? Data(contentsOf: newsPostSourceAvatarImageURL) else { return cell }
             cell.configureNewsForMeAvatarImageView(newsForMeAvatarImage: (UIImage(data: newsPostSourceAvatarImageData) ?? UIImage(systemName: "tortoise.fill"))!)
             
             // Checking for any Data in NewsCopyHistory
-            if news.items[indexPath.row].newsCopyHistory?.first?.date != nil {
-                let postText = news.items[indexPath.row].newsCopyHistory?.first?.text ?? ""
-                cell.configurePostTextLabelText(postTextLabelText: postText)
-                cell.configureNewsDateLabelText(newsDateLabelText: getCellDateText(forIndexPath: indexPath, andTimeToTranslate: Double(news.items[indexPath.row].newsCopyHistory?.first?.date ?? 0)))
-                
-                // Cell formation depending on the Post Type (if Link)
-                if news.items[indexPath.row].newsCopyHistory?.first?.newsAttachments?.first?.type == "link" {
-                    let pathForPhoto = news.items[indexPath.row].newsCopyHistory?.first?.newsAttachments?[0].link?.photo?.sizes.first
-                    let photoWidth = pathForPhoto?.width
-                    let photoHeight = pathForPhoto?.height
-                    
-                    guard photoHeight != nil, photoWidth != nil else {
-                        cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                        return cell
-                    }
-                    if photoHeight != 0 {
-                        photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                    }
-                    let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                    
-                    let newsPostPhoto = pathForPhoto?.url ?? ""
-                    guard let url = URL(string: newsPostPhoto), let data = try? Data(contentsOf: url) else { return cell }
-                    cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-                }
-                
-                // Cell formation depending on the Post Type (if Photo)
-                if news.items[indexPath.row].newsCopyHistory?.first?.newsAttachments?.first?.type == "photo" {
-                    let pathForPhoto = news.items[indexPath.row].newsCopyHistory?.first?.newsAttachments?.first?.photo?.sizes.last
-                    let photoWidth = pathForPhoto?.width
-                    let photoHeight = pathForPhoto?.height
-                    
-                    guard photoHeight != nil, photoWidth != nil else {
-                        cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                        return cell
-                    }
-                    if photoHeight != 0 {
-                        photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                    }
-                    let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                    
-                    let newsPostPhoto = pathForPhoto?.url ?? ""
-                    guard let url = URL(string: newsPostPhoto), let data = try? Data(contentsOf: url) else { return cell }
-                    cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-                }
-                
-                // Cell formation depending on the Post Type (if Video)
-                if news.items[indexPath.row].newsCopyHistory?.first?.newsAttachments?.first?.type == "video" {
-                    let pathForPhoto = news.items[indexPath.row].newsCopyHistory?.first?.newsAttachments?.first?.video?.image?.last
-                    let photoWidth = pathForPhoto?.width
-                    let photoHeight = pathForPhoto?.height
-                    
-                    guard photoHeight != nil, photoWidth != nil else {
-                        cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                        return cell
-                    }
-                    if photoHeight != 0 {
-                        photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                    }
-                    let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                    
-                    let newsPostVideoImage = pathForPhoto?.url ?? ""
-                    guard let url = URL(string: newsPostVideoImage), let data = try? Data(contentsOf: url) else { return cell }
-                    cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-                }
-                
-            } else { // In the absence of any Data in NewsCopyHistory
+            guard news.items[indexPath.row].newsCopyHistory?.count ?? 0 > 0 else {
+                // In the absence of any Data in NewsCopyHistory
                 let postText = news.items[indexPath.row].text ?? ""
                 cell.configurePostTextLabelText(postTextLabelText: postText)
                 cell.configureNewsDateLabelText(newsDateLabelText: getCellDateText(forIndexPath: indexPath, andTimeToTranslate: Double(news.items[indexPath.row].date)))
                 
-                if news.items[indexPath.row].newsAttachments?.first?.type == "link" {
-                    let pathForPhoto = news.items[indexPath.row].newsAttachments?[0].link?.photo?.sizes.first
-                    let photoWidth = pathForPhoto?.width
-                    let photoHeight = pathForPhoto?.height
-                    
-                    guard photoHeight != nil, photoWidth != nil else {
-                        cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                        return cell
-                    }
-                    if photoHeight != 0 {
-                        photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                    }
-                    let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                    
-                    let newsPostPhoto = pathForPhoto?.url ?? ""
-                    guard let url = URL(string: newsPostPhoto), let data = try? Data(contentsOf: url) else { return cell }
-                    cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-                }
-                
-                if news.items[indexPath.row].newsAttachments?.first?.type == "photo" {
-                    let pathForPhoto = news.items[indexPath.row].newsAttachments?.first?.photo?.sizes.last
-                    let photoWidth = pathForPhoto?.width
-                    let photoHeight = pathForPhoto?.height
-                    
-                    guard photoHeight != nil, photoWidth != nil else {
-                        cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                        return cell
-                    }
-                    if photoHeight != 0 {
-                        photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                    }
-                    let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                    
-                    let newsPostPhoto = pathForPhoto?.url ?? ""
-                    guard let url = URL(string: newsPostPhoto), let data = try? Data(contentsOf: url) else { return cell }
-                    cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-                }
-                
-                // Cell formation depending on the Post Type (if Video)
-                if news.items[indexPath.row].newsCopyHistory?.first?.newsAttachments?.first?.type == "video" {
-                    let pathForPhoto = news.items[indexPath.row].newsAttachments?.first?.video?.image?.last
-                    let photoWidth = pathForPhoto?.width
-                    let photoHeight = pathForPhoto?.height
-                    
-                    guard photoHeight != nil, photoWidth != nil else {
-                        cell.configureNewsForMeImage(newsForMeImage: UIImage(systemName: "tortoise.fill")!, photoHeight: tableView.frame.width / photoRatio)
-                        return cell
-                    }
-                    if photoHeight != 0 {
-                        photoRatio = CGFloat(photoWidth!) / CGFloat(photoHeight!)
-                    }
-                    let calculatedPhotoHeight = tableView.frame.width / photoRatio
-                    
-                    let newsPostVideoImage = pathForPhoto?.url ?? ""
-                    guard let url = URL(string: newsPostVideoImage), let data = try? Data(contentsOf: url) else { return cell }
-                    cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
-                }
+                guard let mainAttachmentsPath = news.items[indexPath.row].newsAttachments, let typeOfNewsPost = mainAttachmentsPath.first?.type else { return cell }
+                typeOfNewsPostSwitcher(mainAttachmentsPath: mainAttachmentsPath, typeOfNewsPost: typeOfNewsPost, cell: cell)
+                return cell
             }
+            // If there is any Data in NewsCopyHistory
+            let postText = news.items[indexPath.row].newsCopyHistory?.first?.text ?? ""
+            cell.configurePostTextLabelText(postTextLabelText: postText)
+            cell.configureNewsDateLabelText(newsDateLabelText: getCellDateText(forIndexPath: indexPath, andTimeToTranslate: Double(news.items[indexPath.row].newsCopyHistory?.first?.date ?? 0)))
+            
+            guard let mainAttachmentsPath = news.items[indexPath.row].newsCopyHistory?.first?.newsAttachments, let typeOfNewsPost = mainAttachmentsPath.first?.type else {
+                cell.configureNewsForMeImage(newsForMeImage: UIImage(), photoHeight: 0)
+                return cell
+            }
+            typeOfNewsPostSwitcher(mainAttachmentsPath: mainAttachmentsPath, typeOfNewsPost: typeOfNewsPost, cell: cell)
             return cell
             
         default:
-            return UITableViewCell()
+            return cell
+        }
+    }
+    
+    func newsPostCellFormation(pathForPhoto: NewsAttachmentsPhotoAndVideoSizes, cell: NewsPostCell) {
+        var photoRatio: CGFloat = 1.0
+        guard let photoWidth = pathForPhoto.width, let photoHeight = pathForPhoto.height else { cell.configureNewsForMeImage(newsForMeImage: UIImage(), photoHeight: 0)
+            return }
+        if photoHeight != 0 {
+            photoRatio = CGFloat(photoWidth) / CGFloat(photoHeight)
+        }
+        let calculatedPhotoHeight = tableView.frame.width / photoRatio
+        let newsPostPhoto = pathForPhoto.url ?? ""
+        guard let url = URL(string: newsPostPhoto), let data = try? Data(contentsOf: url) else { return }
+        cell.configureNewsForMeImage(newsForMeImage: (UIImage(data: data) ?? UIImage(systemName: "tortoise.fill"))!, photoHeight: calculatedPhotoHeight)
+        return
+    }
+    
+    func typeOfNewsPostSwitcher(mainAttachmentsPath: [NewsAttachments], typeOfNewsPost: String, cell: NewsPostCell) {
+        switch typeOfNewsPost {
+        case "link": // Cell formation depending on the Post Type (if Link)
+            guard let pathForPhoto = mainAttachmentsPath[0].link?.photo?.sizes.first else {
+                cell.configureNewsForMeImage(newsForMeImage: UIImage(), photoHeight: 0)
+                return
+            }
+            newsPostCellFormation(pathForPhoto: pathForPhoto, cell: cell)
+        case "photo": // Cell formation depending on the Post Type (if Photo)
+            guard let pathForPhoto = mainAttachmentsPath.first?.photo?.sizes.last else {
+                cell.configureNewsForMeImage(newsForMeImage: UIImage(), photoHeight: 0)
+                return
+            }
+            newsPostCellFormation(pathForPhoto: pathForPhoto, cell: cell)
+        case "video": // Cell formation depending on the Post Type (if Video)
+            guard let pathForPhoto = mainAttachmentsPath.first?.video?.image?.last else {
+                cell.configureNewsForMeImage(newsForMeImage: UIImage(), photoHeight: 0)
+                return
+            }
+            newsPostCellFormation(pathForPhoto: pathForPhoto, cell: cell)
+        default:
+            return
         }
     }
 }
 
-
 //MARK: - TableView Delegate Methods
 extension NewsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//                print(indexPath)
+        //                print(indexPath)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -83,7 +83,7 @@
 		C5FDF5672516D7C00047C23B /* NewsReposts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FDF5662516D7C00047C23B /* NewsReposts.swift */; };
 		C5FDF5692516D7EC0047C23B /* NewsItemsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FDF5682516D7EC0047C23B /* NewsItemsViews.swift */; };
 		C5FDF56B2516D83E0047C23B /* NewsAttachmentsPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FDF56A2516D83E0047C23B /* NewsAttachmentsPhoto.swift */; };
-		C5FDF56D2516D8590047C23B /* NewsAttachmentsPhotoSizes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FDF56C2516D8590047C23B /* NewsAttachmentsPhotoSizes.swift */; };
+		C5FDF56D2516D8590047C23B /* NewsAttachmentsPhotoAndVideoSizes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FDF56C2516D8590047C23B /* NewsAttachmentsPhotoAndVideoSizes.swift */; };
 		C5FDF56F2516D9990047C23B /* NewsItemsPhotosItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FDF56E2516D9990047C23B /* NewsItemsPhotosItems.swift */; };
 		C5FDF5732516DD3C0047C23B /* NewsItemsPhotosItemsSizes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FDF5722516DD3C0047C23B /* NewsItemsPhotosItemsSizes.swift */; };
 		C5FDF5752516DD550047C23B /* NewsItemsPhotosLikes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FDF5742516DD550047C23B /* NewsItemsPhotosLikes.swift */; };
@@ -171,7 +171,7 @@
 		C5FDF5662516D7C00047C23B /* NewsReposts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsReposts.swift; sourceTree = "<group>"; };
 		C5FDF5682516D7EC0047C23B /* NewsItemsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsItemsViews.swift; sourceTree = "<group>"; };
 		C5FDF56A2516D83E0047C23B /* NewsAttachmentsPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsAttachmentsPhoto.swift; sourceTree = "<group>"; };
-		C5FDF56C2516D8590047C23B /* NewsAttachmentsPhotoSizes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsAttachmentsPhotoSizes.swift; sourceTree = "<group>"; };
+		C5FDF56C2516D8590047C23B /* NewsAttachmentsPhotoAndVideoSizes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsAttachmentsPhotoAndVideoSizes.swift; sourceTree = "<group>"; };
 		C5FDF56E2516D9990047C23B /* NewsItemsPhotosItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsItemsPhotosItems.swift; sourceTree = "<group>"; };
 		C5FDF5722516DD3C0047C23B /* NewsItemsPhotosItemsSizes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsItemsPhotosItemsSizes.swift; sourceTree = "<group>"; };
 		C5FDF5742516DD550047C23B /* NewsItemsPhotosLikes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsItemsPhotosLikes.swift; sourceTree = "<group>"; };
@@ -281,7 +281,7 @@
 				C5FDF56A2516D83E0047C23B /* NewsAttachmentsPhoto.swift */,
 				C5116814252D3FC20055BDB3 /* NewsAttachmentsVideo.swift */,
 				C5116816252D406A0055BDB3 /* NewsAttachmentsVideoImages.swift */,
-				C5FDF56C2516D8590047C23B /* NewsAttachmentsPhotoSizes.swift */,
+				C5FDF56C2516D8590047C23B /* NewsAttachmentsPhotoAndVideoSizes.swift */,
 			);
 			path = NewsAttachments;
 			sourceTree = "<group>";
@@ -729,7 +729,7 @@
 				C5B2CEC024C8322B001D91AB /* LoadingIndicator.swift in Sources */,
 				C5B65EB224CE379800B3AE97 /* PhotosLayout.swift in Sources */,
 				C536176824F5A25C00D80818 /* PhotoResponse.swift in Sources */,
-				C5FDF56D2516D8590047C23B /* NewsAttachmentsPhotoSizes.swift in Sources */,
+				C5FDF56D2516D8590047C23B /* NewsAttachmentsPhotoAndVideoSizes.swift in Sources */,
 				C59E19A024B7E34900F4EEC2 /* AvailableGroupsViewController.swift in Sources */,
 				C5FDF55F2516D6A30047C23B /* NewsComments.swift in Sources */,
 				C59E1DDC2518029100AD9497 /* NewsCopyHistory.swift in Sources */,

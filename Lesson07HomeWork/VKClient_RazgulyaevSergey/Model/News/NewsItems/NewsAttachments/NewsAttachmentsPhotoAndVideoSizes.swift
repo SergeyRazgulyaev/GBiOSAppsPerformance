@@ -9,8 +9,8 @@
 import Foundation
 
 class NewsAttachmentsPhotoAndVideoSizes: Decodable {
-    var height: Int = 0
-    var type: String = ""
-    var url: String = ""
+    var height: Int?
+    var type: String?
+    var url: String?
     var width: Int?
 }

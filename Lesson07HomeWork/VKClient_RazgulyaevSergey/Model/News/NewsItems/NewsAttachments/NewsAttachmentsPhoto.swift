@@ -12,7 +12,7 @@ class NewsAttachmentsPhoto: Decodable {
     var date: Double = 0
     var id: Int = 0
     var ownerID: Int = 0
-    var sizes: [NewsAttachmentsPhotoSizes]
+    var sizes: [NewsAttachmentsPhotoAndVideoSizes]
     
     enum CodingKeys: String, CodingKey {
         case date

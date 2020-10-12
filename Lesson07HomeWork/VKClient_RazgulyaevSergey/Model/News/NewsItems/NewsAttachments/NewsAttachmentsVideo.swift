@@ -10,5 +10,5 @@ import Foundation
 
 class NewsAttachmentsVideo: Decodable {
     var date: Double = 0
-    var image: [NewsAttachmentsVideoImages]?
+    var image: [NewsAttachmentsPhotoAndVideoSizes]?
 }
