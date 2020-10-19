@@ -12,7 +12,10 @@ import AsyncDisplayKit
 class ASDKImageNode: ASCellNode {
     private let photoImageNode = ASNetworkImageNode()
     private let resource: PhotoItems
-    private var aspectRatio: CGFloat { resource.sizes.last!.width != 0 ? CGFloat(resource.sizes.last!.height)/CGFloat(resource.sizes.last!.width) : 1 }
+    private var aspectRatio: CGFloat {
+        guard resource.sizes.last != nil else { return 1 }
+        return resource.sizes.last!.width != 0 ? CGFloat(resource.sizes.last!.height) / CGFloat(resource.sizes.last!.width) : 1
+    }
     
     init(resource: PhotoItems) {
         self.resource = resource

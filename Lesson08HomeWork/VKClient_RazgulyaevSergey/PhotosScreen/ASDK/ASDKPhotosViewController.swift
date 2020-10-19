@@ -9,7 +9,7 @@
 import UIKit
 import AsyncDisplayKit
 
-class ASDKPhotosViewController: ASViewController<ASTableNode> {
+class ASDKPhotosViewController: ASViewController<ASTableNode>, ASTableDelegate {
     //MARK: - Base properties
     var name: String = ""
     var friendID: Int = 0
@@ -38,8 +38,6 @@ class ASDKPhotosViewController: ASViewController<ASTableNode> {
     //MARK: - ViewController Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("name = \(name)")
-        print("friendID = \(friendID)")
         loadPhotosFromNetWork()
     }
 }
@@ -75,35 +73,4 @@ extension ASDKPhotosViewController: ASTableDataSource {
         guard friendsPhotos.count > indexPath.section else { return  ASCellNode() }
         return ASDKImageNode(resource: friendsPhotos[indexPath.row])
     }
-}
-
-/*
-//MARK: - TableNode Data Source Methods
-extension ASDKPhotosViewController: ASTableDataSource {
-    func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return friendsPhotos.count
-    }
-
-    func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-    
-    func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
-        guard friendsPhotos.count > indexPath.section else { return { ASCellNode() } }
-        let cellNodeBlock = { () -> ASCellNode in
-            let node = ASDKImageNode(resource: self.friendsPhotos[indexPath.section])
-            return node
-        }
-        return cellNodeBlock
-//        ASDKImageNode(resource: friendsPhotos[indexPath.row])
-    }
-}
-*/
-
-
-//MARK: - TableNode Delegate Methods
-extension ASDKPhotosViewController: ASTableDelegate {
-//    func shouldBatchFetch(for tableNode: ASTableNode) -> Bool {
-//        true
-//    }
 }
